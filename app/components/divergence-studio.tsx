@@ -527,18 +527,8 @@ export default function DivergenceStudio() {
                     </span>
                   ))}
                 </div>
-                <div className="mt-10 flex flex-wrap items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setMode("warning")}
-                    className="cta-burn inline-flex items-center justify-center gap-3 rounded-full border border-white/18 px-8 py-5 text-lg font-semibold text-white"
-                  >
-                    Увидеть свою развилку
-                    <span className="text-xl">→</span>
-                  </button>
-                  <div className="text-sm text-white/56">
-                    40 вопросов · 1 честный результат
-                  </div>
+                <div className="mt-10 text-sm text-white/56">
+                  40 вопросов · 1 честный результат
                 </div>
               </div>
 
@@ -770,7 +760,6 @@ export default function DivergenceStudio() {
 
   function renderResult() {
     if (!result) return null;
-
     return (
       <main ref={resultRef} className="min-h-screen bg-[linear-gradient(180deg,_#090b0f_0%,_#12161c_100%)] text-white">
         <section className="relative mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8 lg:py-6">

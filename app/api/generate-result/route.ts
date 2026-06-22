@@ -52,6 +52,122 @@ function sanitizeResult(result: Record<string, unknown>, fallback: DivergenceRes
     ? (result.story_card as Record<string, unknown>)
     : {};
 
+  const psychologicalFrame =
+    typeof result.psychological_frame === "object" && result.psychological_frame
+      ? (result.psychological_frame as Record<string, unknown>)
+      : {};
+
+  const corePattern =
+    typeof result.core_pattern === "object" && result.core_pattern
+      ? (result.core_pattern as Record<string, unknown>)
+      : {};
+
+  const mappedFromNewSchema = {
+    profile_title:
+      typeof result.profile_title === "string" && result.profile_title.trim()
+        ? String(result.profile_title)
+        : fallback.profile_title,
+    archetype:
+      typeof result.archetype === "string" && result.archetype.trim()
+        ? String(result.archetype)
+        : typeof corePattern.name === "string" && corePattern.name.trim()
+          ? String(corePattern.name)
+          : fallback.archetype,
+    confidence_level:
+      result.confidence_level === "high" || result.confidence_level === "medium" || result.confidence_level === "low"
+        ? result.confidence_level
+        : fallback.confidence_level,
+    short_summary:
+      typeof result.short_summary === "string" && result.short_summary.trim()
+        ? String(result.short_summary)
+        : typeof corePattern.short_description === "string" && corePattern.short_description.trim()
+          ? String(corePattern.short_description)
+          : fallback.short_summary,
+    dark_future_letter: pickString("dark_future_letter", fallback.dark_future_letter),
+    strong_future_letter: pickString("strong_future_letter", fallback.strong_future_letter),
+    behavior_loop: {
+      trigger:
+        typeof result.behavior_loop === "object" && result.behavior_loop && typeof (result.behavior_loop as Record<string, unknown>).trigger === "string" && String((result.behavior_loop as Record<string, unknown>).trigger).trim()
+          ? String((result.behavior_loop as Record<string, unknown>).trigger)
+          : typeof psychologicalFrame.main_emotion_avoided === "string" && psychologicalFrame.main_emotion_avoided.trim()
+            ? String(psychologicalFrame.main_emotion_avoided)
+            : fallback.behavior_loop.trigger,
+      automatic_reaction:
+        typeof result.behavior_loop === "object" && result.behavior_loop && typeof (result.behavior_loop as Record<string, unknown>).automatic_reaction === "string" && String((result.behavior_loop as Record<string, unknown>).automatic_reaction).trim()
+          ? String((result.behavior_loop as Record<string, unknown>).automatic_reaction)
+          : typeof corePattern.mechanism === "string" && corePattern.mechanism.trim()
+            ? String(corePattern.mechanism)
+            : fallback.behavior_loop.automatic_reaction,
+      temporary_reward:
+        typeof result.behavior_loop === "object" && result.behavior_loop && typeof (result.behavior_loop as Record<string, unknown>).temporary_reward === "string" && String((result.behavior_loop as Record<string, unknown>).temporary_reward).trim()
+          ? String((result.behavior_loop as Record<string, unknown>).temporary_reward)
+          : typeof corePattern.protective_function === "string" && corePattern.protective_function.trim()
+            ? String(corePattern.protective_function)
+            : fallback.behavior_loop.temporary_reward,
+      price:
+        typeof result.behavior_loop === "object" && result.behavior_loop && typeof (result.behavior_loop as Record<string, unknown>).price === "string" && String((result.behavior_loop as Record<string, unknown>).price).trim()
+          ? String((result.behavior_loop as Record<string, unknown>).price)
+          : typeof corePattern.price === "string" && corePattern.price.trim()
+            ? String(corePattern.price)
+            : fallback.behavior_loop.price,
+      loop_breaker:
+        typeof result.behavior_loop === "object" && result.behavior_loop && typeof (result.behavior_loop as Record<string, unknown>).loop_breaker === "string" && String((result.behavior_loop as Record<string, unknown>).loop_breaker).trim()
+          ? String((result.behavior_loop as Record<string, unknown>).loop_breaker)
+          : typeof result.first_72h_step === "string" && String(result.first_72h_step).trim()
+            ? String(result.first_72h_step)
+            : fallback.behavior_loop.loop_breaker,
+    },
+    main_pattern:
+      typeof result.main_pattern === "string" && result.main_pattern.trim()
+        ? String(result.main_pattern)
+        : typeof corePattern.short_description === "string" && corePattern.short_description.trim()
+          ? String(corePattern.short_description)
+          : fallback.main_pattern,
+    main_risk:
+      typeof result.main_risk === "string" && result.main_risk.trim()
+        ? String(result.main_risk)
+        : typeof corePattern.what_it_protects_from === "string" && corePattern.what_it_protects_from.trim()
+          ? String(corePattern.what_it_protects_from)
+          : fallback.main_risk,
+    main_strength:
+      typeof result.main_strength === "string" && result.main_strength.trim()
+        ? String(result.main_strength)
+        : fallback.main_strength,
+    first_72h_step: pickString("first_72h_step", fallback.first_72h_step),
+    if_then_plan: pickString("if_then_plan", fallback.if_then_plan),
+    story_card: {
+      title:
+        typeof storyCard.title === "string" && storyCard.title.trim()
+          ? String(storyCard.title)
+          : fallback.story_card.title,
+      if_nothing_changes:
+        typeof storyCard.if_nothing_changes === "string" && storyCard.if_nothing_changes.trim()
+          ? String(storyCard.if_nothing_changes)
+          : fallback.story_card.if_nothing_changes,
+      if_i_start_now:
+        typeof storyCard.if_i_start_now === "string" && storyCard.if_i_start_now.trim()
+          ? String(storyCard.if_i_start_now)
+          : fallback.story_card.if_i_start_now,
+      main_risk:
+        typeof storyCard.main_risk === "string" && storyCard.main_risk.trim()
+          ? String(storyCard.main_risk)
+          : fallback.story_card.main_risk,
+      first_step:
+        typeof storyCard.first_step === "string" && storyCard.first_step.trim()
+          ? String(storyCard.first_step)
+          : fallback.story_card.first_step,
+    },
+    disclaimer: pickString("disclaimer", fallback.disclaimer),
+  } satisfies DivergenceResult;
+
+  if (
+    typeof result.psychological_frame === "object" ||
+    typeof result.core_pattern === "object" ||
+    typeof result.confidence_explanation === "string"
+  ) {
+    return mappedFromNewSchema;
+  }
+
   return {
     profile_title: pickString("profile_title", fallback.profile_title),
     archetype: pickString("archetype", fallback.archetype),
@@ -146,7 +262,7 @@ export async function POST(request: Request) {
         "X-Title": "Развилка",
       },
       body: JSON.stringify({
-        model: process.env.OPENROUTER_MODEL ?? "deepseek/deepseek-v4-pro",
+        model: process.env.OPENROUTER_MODEL ?? "google/gemini-3.1-flash-lite-preview",
         messages: [
           {
             role: "system",
@@ -157,6 +273,43 @@ export async function POST(request: Request) {
             content: JSON.stringify(
               {
                 answers,
+                evidence: {
+                  wants: [
+                    answers.blocked_goal,
+                    answers.desired_self_3_years,
+                    answers.progress_marker,
+                    answers.self_proof,
+                  ],
+                  avoidance: [
+                    answers.avoidance_actions,
+                    answers.drop_moment,
+                    answers.inner_excuse,
+                    answers.habit_reward,
+                    answers.habit_price,
+                  ],
+                  pressure: [
+                    answers.current_pressure,
+                    answers.loss_of_control_time,
+                    answers.triggers,
+                    answers.first_step_obstacle,
+                  ],
+                  strengths: [
+                    answers.existing_positive_habits,
+                    answers.discipline_area,
+                    answers.strengths,
+                    answers.praise_from_others,
+                    answers.authentic_moments,
+                    answers.long_term_interest,
+                  ],
+                  self_story: [
+                    answers.rationalized_excuse,
+                    answers.close_person_view,
+                    answers.worst_3_year_regret,
+                    answers.disliked_self_version,
+                    answers.life_scene,
+                    answers.bigger_fear,
+                  ],
+                },
                 scaffold: {
                   profile_title: fallback.profile_title,
                   archetype: fallback.archetype,
@@ -170,7 +323,9 @@ export async function POST(request: Request) {
                 requirements: {
                   output_format: "strict_json",
                   depth: "deep",
-                  tone: "cinematic, honest, safe",
+                  tone: "cinematic, honest, safe, but sharply individualized",
+                  differentiation: "Use a distinct dominant conflict and evidence trail for this user; do not recycle a generic template.",
+                  letter_rules: "Write both future letters as 220-280 words, 3 short paragraphs each, grounded in at least 3 concrete signals from the answers. Dark letter must show accumulation of cost over time; strong letter must show a small real shift and its consequences. Avoid generic openings and repeated stems.",
                 },
               },
               null,
@@ -178,7 +333,7 @@ export async function POST(request: Request) {
             ),
           },
         ],
-        temperature: 0.58,
+        temperature: 0.42,
         response_format: { type: "json_object" },
       }),
     });
