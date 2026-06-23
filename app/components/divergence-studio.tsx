@@ -527,6 +527,16 @@ export default function DivergenceStudio() {
                     </span>
                   ))}
                 </div>
+                <div className="mt-10">
+                  <button
+                    type="button"
+                    onClick={() => setMode("warning")}
+                    className="cta-burn inline-flex items-center justify-center gap-3 rounded-full border border-white/18 px-8 py-5 text-lg font-semibold text-white"
+                  >
+                    Увидеть свою развилку
+                    <span className="text-xl">→</span>
+                  </button>
+                </div>
                 <div className="mt-10 text-sm text-white/56">
                   40 вопросов · 1 честный результат
                 </div>
